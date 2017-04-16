@@ -2,6 +2,7 @@ package softuniBlog.controller;
 
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -95,5 +96,34 @@ public class ArticleController {
 
 		return "redirect:/article/" + article.getId();
 	}
+
+	@GetMapping("article/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+	public String delete (@PathVariable Integer id, Model model) {
+        if (!this.articleRepository.exists(id)){
+            return "redirect:/";
+        }
+
+        Article article = this.articleRepository.findOne(id);
+
+        model.addAttribute("article", article);
+        model.addAttribute("view", "article/delete");
+
+        return "base-layout";
+    }
+
+    @PostMapping("article/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String postProcess(@PathVariable Integer id){
+	    if (!this.articleRepository.exists(id)){
+	        return "redirect:/";
+        }
+
+        Article article = this.articleRepository.findOne(id);
+
+	    this.articleRepository.delete(article);
+
+	    return "redirect:/";
+    }
 
 }
