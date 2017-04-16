@@ -81,3 +81,4 @@ Servers\Unnamed\ServerVersion<|||>3<|||>100113
 Servers\Unnamed\LastConnect<|||>1<|||>2017-04-16 09:41:26
 Servers\Unnamed\lastUsedDB<|||>1<|||>javablog
 Servers\Unnamed\javablog|users\Sort<|||>1<|||>1_email|
+Servers\Unnamed\javablog|users_roles\Sort<|||>1<|||>0_users_id|

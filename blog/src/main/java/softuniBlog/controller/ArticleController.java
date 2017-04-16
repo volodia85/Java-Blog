@@ -1,9 +1,11 @@
 package softuniBlog.controller;
 
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -57,6 +59,15 @@ public class ArticleController {
 			return "redirect:/";
 		}
 
+		if (!(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+            UserDetails user = (UserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal();
+
+            User userEntity = this.userRepository.findByEmail(user.getUsername());
+
+            model.addAttribute("user", userEntity);
+        }
+
 		Article article = this.articleRepository.findOne(id);
 
 		model.addAttribute("article", article);
@@ -74,6 +85,10 @@ public class ArticleController {
 
 		Article article = this.articleRepository.findOne(id);
 
+		if (!this.isAuthorOrAdmin(article)){
+		    return "redirect:/";
+        }
+
 		model.addAttribute("article", article);
 		model.addAttribute("view", "article/edit");
 
@@ -88,6 +103,10 @@ public class ArticleController {
 		}
 
 		Article article = articleRepository.findOne(id);
+
+        if (!this.isAuthorOrAdmin(article)){
+            return "redirect:/";
+        }
 
 		article.setTitle(model.getTitle());
 		article.setContent(model.getContent());
@@ -106,6 +125,10 @@ public class ArticleController {
 
         Article article = this.articleRepository.findOne(id);
 
+        if (!this.isAuthorOrAdmin(article)){
+            return "redirect:/";
+        }
+
         model.addAttribute("article", article);
         model.addAttribute("view", "article/delete");
 
@@ -121,9 +144,22 @@ public class ArticleController {
 
         Article article = this.articleRepository.findOne(id);
 
+        if (!this.isAuthorOrAdmin(article)){
+            return "redirect:/";
+        }
+
 	    this.articleRepository.delete(article);
 
 	    return "redirect:/";
+    }
+
+    private boolean isAuthorOrAdmin(Article article) {
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+        User userEntity = this.userRepository.findByEmail(user.getUsername());
+
+        return userEntity.isAdmin() || userEntity.isAuthor(article);
     }
 
 }
