@@ -9,6 +9,8 @@
 
                     <p th:text="${article.content}"> </p>
 
+                    <img th:src="${article.imagePath}" alt="Article Image" />
+
                     <small class="author" th:text="${article.author.fullName}"></small>
 
                     <footer>

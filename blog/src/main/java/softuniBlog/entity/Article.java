@@ -13,13 +13,24 @@ public class Article {
 
     private User author;
 
-    public Article() {    }
+    private String imagesPath;
+
+    public Article() {
+    }
 
     public Article(String title, String content, User author) {
         this.title = title;
         this.content = content;
         this.author = author;
     }
+
+    public Article(String title, String content, User author, String imagesPath) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.imagesPath = imagesPath;
+    }
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,8 +70,18 @@ public class Article {
         this.author = author;
     }
 
+    public String getImagePath() {
+        return imagesPath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagesPath = imagePath;
+    }
+
     @Transient
-    public String getSummary(){
+    public String getSummary() {
         return this.getContent().substring(0, this.getContent().length() / 2) + "...";
     }
+
+
 }
